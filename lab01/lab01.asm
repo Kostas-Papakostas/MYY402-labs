@@ -2,6 +2,7 @@
 # for MYY402 - Computer Architecture
 # Aris Efthymiou
 # Department of Computer Engineering, University of Ioannina
+#Konstantinos Papakostas 2399
 
 # These are comments! Anything up to the end of line is ignored
 
