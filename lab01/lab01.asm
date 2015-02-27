@@ -21,15 +21,19 @@ main:   # Words ending with ':' are **labels**
         #    instruction type is more visible.
       
         #la         $a0, mesg1        # get address of mesg1 into $a0
-        # la is a pseudo-instruction. Notice that is gets converted to 2
+        
+		# la is a pseudo-instruction. Notice that is gets converted to 2
         #   instructions after assemblying.
         #   Ignore this detail for now. We'll get back to this later
-        #addiu      $v0, $zero, 4     # system service 4: print string
+        
+		#addiu      $v0, $zero, 4     # system service 4: print string
         #syscall                      #   located at address $a0
+		
 		# This is a system call. We call the operating system
 		#   to display a string for us. Think of it as a special
 		#   subroutine.
-        lw	    $a0, matric 
+        
+		lw 	    $a0, matric 
          
         #add      $v0, $zero, $a0     # system service 5: read integer
         #syscall             # integer returned in $v0

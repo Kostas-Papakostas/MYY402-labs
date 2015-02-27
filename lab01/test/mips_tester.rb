@@ -158,9 +158,11 @@ module MIPSTester
         key, value = reg.strip.split("\t")
         
         if key =~ /^Mem/
-          out.merge! key[4..-2] => value.to_i
+          out.merge! key[4..-2] => value.to_i(16)
         else
-          out.merge! key[1..-1] => value.to_i
+          if key =~ /^\$/
+            out.merge! key[1..-1] => value.to_i(16)
+          end
         end
       end
       
