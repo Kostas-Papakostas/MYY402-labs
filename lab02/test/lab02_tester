@@ -14,7 +14,7 @@ else
     # Do not change the path in line 8. It is 
     #  for automatic testing.
     ##########################################
-    tester = MIPSTester::MIPS.new :mars_path => "/Users/arefthymi/CS_UOI/courses/cs_arch/resources/MIPS_MARS_sim/Mars4_5.jar"
+    tester = MIPSTester::MIPS.new :mars_path => "C:/Users/ntinos/Desktop/MYY402-labs/lab02/Mars4_5.jar"
 end
 
 
