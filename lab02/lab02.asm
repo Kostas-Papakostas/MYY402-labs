@@ -17,31 +17,37 @@ loop:
         # end of loop here
 	andi 	   $t1, $s2, 0x1     
         addiu      $s2, $s2,  -1     # Adjust $s2 to point to last char
+        lbu        $t9, 0($s2)
         
         ########################################################################
-        addi       $a0, $zero, 0	#$a0=1
-        addi       $t4, $zero, 2	#$t4=1
+        addi       $a0, $zero, 1	#$a0=1
+        addi       $t4, $zero, 1	#$t4=1
         addu       $s3, $s1,   $zero	#$s3=$s1
         beq 	   $t1, $zero, even	#check if number of letters is even
         j odd				#if not it jumps to odd
 even:	
-	addiu      $s3, $s3, 1		#goes a letter ahead
+	lbu        $t8, 0($s3)		#finds the next character
+	lbu        $t9, 0($s2)		#finds the prevous character
 	bne	   $s2, $s3, exit	#check if the letters are NOT THE SAME,if NOT it continues from below
 	sub	   $t3, $s2, $s3	#finds the distance of the pointers of the letters
-	beq 	   $t3, $t4, notpalen	#checks if the distance is 1, if yes it exits(this means we reached the center of the word)
+	beq 	   $t3, $t4, palen	#checks if the distance is 1, if yes it exits(this means we reached the center of the word)
 	addiu      $s2, $s2,  -1	#goes the pointer of letter one bit back
+	addiu      $s3, $s3, 1		#goes a letter ahead
 	j even
         
 odd:
-	addiu      $s3, $s3, 1		#goes the pointer of letter one bit ahead
-	bne	   $s2, $s3, exit	#check if the letters are NOT THE SAME,if NOT, it continues from below
+
+	lbu        $t8, 0($s3)		#finds the next character
+	lbu        $t9, 0($s2)		#finds the previous character
+	bne	   $t8, $t9, exit	#check if the letters are NOT THE SAME,if NOT, it continues from below
 	sub	   $t3, $s3, $s2	#finds the distance of the pointers of the letters
-	beq 	   $t3, $t4, notpalen #checks if the distance is 0(because the number of letters is odd),if yes it exits(this means we reached the center of the word)
+	beq 	   $t3, $zero, palen #checks if the distance is 0(because the number of letters is odd),if yes it exits(this means we reached the center of the word)
 	addiu      $s2, $s2,  -1	#goes the pointer of letter one bit back
+	addiu      $s3, $s3, 1		#goes the pointer of letter one bit ahead
 	j odd
 
-notpalen:
-	addi       $a0,$a0,1
+palen:
+	subi       $a0,$a0,1
 	j exit                
         ########################################################################
 
