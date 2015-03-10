@@ -18,7 +18,7 @@ else
 end
 
 
-tester.test "../lab03.asm" do
+tester.test "../hex2i.asm" do
   # The expected register values at the end of execution are placed here
   expect :s0 => 0xbadcafe, '0x10010000' => 0xbadcafe
   verbose! # Optional verbosity!

@@ -5,7 +5,7 @@
 
         .data
 number:
-        .word 0xdeadc0de 
+        .word 0xDEADC0DE 
 outmsg:
         .space 9  # Leave space for 8 hex digits plus '\0'
 

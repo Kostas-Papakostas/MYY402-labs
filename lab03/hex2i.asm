@@ -6,7 +6,7 @@
 number:
         .word    0      # dummy initial value
 inmsg:
-        .asciiz "badcafe" 
+        .asciiz "BADCAFE" 
 
         .globl main
 
