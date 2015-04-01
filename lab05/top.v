@@ -1,3 +1,4 @@
+//Konstantinos Papakostas 2399
 module top;
 
 reg        a,b,c,d,r;
@@ -29,6 +30,12 @@ initial begin
   b = 1;
   c = 0;
   d = 0;
+  r = 1;
+  #100 ;
+  a = 1;
+  b = 1;
+  c = 1;
+  d = 1;
   r = 1;
   #100 ;
 end
