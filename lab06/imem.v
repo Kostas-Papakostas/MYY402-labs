@@ -5,7 +5,7 @@ module imem(input  [31:0] a,
 
   initial
     begin
-      $readmemh("C:\Users\ntinos\Desktop\MYY402-labs\lab06\instr_memfile.dat",RAM);
+      $readmemh("C:/Users/ntinos/Desktop/MYY402-labs/lab06/instr_memfile.dat",RAM);
     end
 
   wire [6:0] address;

@@ -6,7 +6,7 @@ module dmem(input         clk, we,
 
   initial
     begin
-      $readmemh("C:\Users\ntinos\Desktop\MYY402-labs\lab06\data_memfile.dat",RAM);
+      $readmemh("C:/Users/ntinos/Desktop/MYY402-labs/lab06/data_memfile.dat",RAM);
     end
 	 
   wire [5:0] address;
