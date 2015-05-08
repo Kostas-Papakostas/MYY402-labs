@@ -17,7 +17,7 @@ class Cache {
 	private int addrsize=48;//zize of address
 	private int blockoff;
 	private double setindex;
-	
+	private int mask;
 	// -----------------------------------------------------------
 	// ADD ANY OTHER VARIABLES NEEDED FOR CACHE CONFIGURATION HERE
 	// E.G.:
@@ -64,10 +64,10 @@ class Cache {
 		// Write code here
 		// Replace return const below with the computed tag
 	    // -----------------------------------------------------------
-		int mask;
+		
 		long res;
 		mask=addrsize-((int)setindex*4)-((int)(Math.log(blockSize)/Math.log(2))*4);
-		res=addr >> mask;
+		res=addr >> (mask);
 		
 		return res;
 	}
@@ -79,7 +79,8 @@ class Cache {
 	    // -----------------------------------------------------------
 		long res;
 		res=addr >>> ((int)setindex*4);
-		res=res % ((int)setindex*4);
+		res=res << ((int)setindex*4+addrsize-blockSize);
+		res=res >>> ((int)setindex*4+addrsize-blockSize);
 		return res;
 	}
     public long getBoff(long addr) {
@@ -88,7 +89,8 @@ class Cache {
 		// Replace return const below with the computed block offset
 	    // -----------------------------------------------------------
 		long res;
-		res=addr & (blockoff);
+		res=addr << (addrsize+8);
+		res=res >>> (addrsize+(blockoff)-(blockSize));
 		return res;
 	}
 
