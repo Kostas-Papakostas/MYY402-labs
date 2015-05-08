@@ -16,8 +16,7 @@ class Cache {
 	private int power=0;//power of 2 for blocksize;
 	private int addrsize=48;//zize of address
 	private int blockoff;
-	private int blockadd;
-	private int setindex;
+	private double setindex;
 	
 	// -----------------------------------------------------------
 	// ADD ANY OTHER VARIABLES NEEDED FOR CACHE CONFIGURATION HERE
@@ -51,15 +50,10 @@ class Cache {
             System.err.println("Argument" + args[2] + " must be an integer.");
             System.exit(1);
         }
+		//################NEW CODE#######################
 		numofset=8/associativity; //computes the number of sets
-		while(blockSize%2==0){
-			power+=1;//compute the bytes of block offset
-			blockSize=blockSize/2;
-		}
-		blockoff=addrsize % (int)Math.pow(2,power);
-		blockadd=addrsize/(int)Math.pow(2,power);
-		setindex=blockadd % (int)Math.pow(2,numofset);
-		
+		blockoff=addrsize % (4*(int)Math.pow(2,(Math.log(blockSize)/Math.log(2))));
+		setindex=Math.log(numofset)/Math.log(2);
 	    // -----------------------------------------------------------
 		// Complete code here for other cache parameters derived from the above.
 	    // -----------------------------------------------------------
@@ -72,7 +66,7 @@ class Cache {
 	    // -----------------------------------------------------------
 		int mask;
 		long res;
-		mask=addrsize-numofset-power;
+		mask=addrsize-((int)setindex*4)-((int)(Math.log(blockSize)/Math.log(2))*4);
 		res=addr >> mask;
 		
 		return res;
@@ -84,7 +78,8 @@ class Cache {
 		// Replace return const below with the computed index
 	    // -----------------------------------------------------------
 		long res;
-		res=addr >> setindex;
+		res=addr >>> ((int)setindex*4);
+		res=res % ((int)setindex*4);
 		return res;
 	}
     public long getBoff(long addr) {
@@ -93,7 +88,7 @@ class Cache {
 		// Replace return const below with the computed block offset
 	    // -----------------------------------------------------------
 		long res;
-		res=addr >> power;
+		res=addr & (blockoff);
 		return res;
 	}
 
