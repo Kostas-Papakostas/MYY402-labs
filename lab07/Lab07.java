@@ -6,12 +6,19 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.Math;
 
 class Cache {
-	private int  blockSize;
+	private int  blockSize; //each block has blocksize bytes
 	private int  associativity;
 	private long capacity;
-
+	private int numofset;
+	private int power=0;//power of 2 for blocksize;
+	private int addrsize=48;//zize of address
+	private int blockoff;
+	private int blockadd;
+	private int setindex;
+	
 	// -----------------------------------------------------------
 	// ADD ANY OTHER VARIABLES NEEDED FOR CACHE CONFIGURATION HERE
 	// E.G.:
@@ -44,6 +51,15 @@ class Cache {
             System.err.println("Argument" + args[2] + " must be an integer.");
             System.exit(1);
         }
+		numofset=8/associativity; //computes the number of sets
+		while(blockSize%2==0){
+			power+=1;//compute the bytes of block offset
+			blockSize=blockSize/2;
+		}
+		blockoff=addrsize % (int)Math.pow(2,power);
+		blockadd=addrsize/(int)Math.pow(2,power);
+		setindex=blockadd % (int)Math.pow(2,numofset);
+		
 	    // -----------------------------------------------------------
 		// Complete code here for other cache parameters derived from the above.
 	    // -----------------------------------------------------------
@@ -54,7 +70,12 @@ class Cache {
 		// Write code here
 		// Replace return const below with the computed tag
 	    // -----------------------------------------------------------
-		return 0xabcd;
+		int mask;
+		long res;
+		mask=addrsize-numofset-power;
+		res=addr >> mask;
+		
+		return res;
 	}
 
     public long getIndex(long addr) {
@@ -62,15 +83,18 @@ class Cache {
 		// Write code here
 		// Replace return const below with the computed index
 	    // -----------------------------------------------------------
-		return 0x10;
+		long res;
+		res=addr >> setindex;
+		return res;
 	}
-
     public long getBoff(long addr) {
 	    // -----------------------------------------------------------
 		// Write code here
 		// Replace return const below with the computed block offset
 	    // -----------------------------------------------------------
-		return 0x4;
+		long res;
+		res=addr >> power;
+		return res;
 	}
 
 }
