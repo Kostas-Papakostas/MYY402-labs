@@ -35,13 +35,8 @@ class Cache {
 	private long blockBit;
 	private long numSets;
 	private long indexBit;
-	//private int[] validBit;
-	//ArrayList mylist=null;     
 	HashMap LRU=null;		//it keeps the addresses and the if someone has been used recently
 	HashMap validBit=null;		//it keeps the validBits
-	private String s;
-	private String s2;
-	private int i,j;
 	// Initialize any data structures for the cache
 	//  and counters of events.
 	private void initCache() {
@@ -56,8 +51,6 @@ class Cache {
 		writeMisses = 0;
 		numRefills = 0;
 		numAccesses = 0;
-		i=0;
-		j=0;
 	}
 	
 	// The main cache method. 
