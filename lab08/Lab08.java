@@ -5,8 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.*;
-import java.util.Collection;
+
+
 
 class Cache {
 	// --------------------------------------------
@@ -32,16 +32,7 @@ class Cache {
 	private long writeMisses;
 	private long numRefills;   // Data transfers from main mem, due to misses
 	private long numAccesses;
-	private long blockBit;
-	private long numSets;
-	private long indexBit;
-	//private int[] validBit;
-	//ArrayList mylist=null;     
-	HashMap LRU=null;		//it keeps the addresses and the if someone has been used recently
-	HashMap validBit=null;		//it keeps the validBits
-	private String s;
-	private String s2;
-	private int i,j;
+
 	// Initialize any data structures for the cache
 	//  and counters of events.
 	private void initCache() {
@@ -56,8 +47,6 @@ class Cache {
 		writeMisses = 0;
 		numRefills = 0;
 		numAccesses = 0;
-		i=0;
-		j=0;
 	}
 	
 	// The main cache method. 
@@ -67,85 +56,8 @@ class Cache {
 	    // -----------------------------------------------------------
 		// Write your code here
 	    // -----------------------------------------------------------
-		long address=getTag(addr);
-		int lru;
-		Collection c;
-		Object maxValue;
-		numAccesses+=1;
-		int vb;
-		
-		Set ref = LRU.keySet();
-		Iterator it = ref.iterator();
-		List list = new ArrayList();
+	
 
-		
-		if(op.equals("W")){
-			if(LRU.containsKey(address)==true){
-				
-				if((((int)validBit.get(address)&address))==0){
-					writeHits++;
-					validBit.put(address,1);
-					lru=(int)LRU.get(address);
-					LRU.put(address,lru-2);
-				}else if((((int)validBit.get(address)&address))==1){
-					writeMisses++;
-					if(LRU.size()==capacity/2){
-						numRefills++;
-						c=LRU.values();
-						maxValue=(Object)Collections.max(c);
-						while (it.hasNext()) {
-							Object o = it.next(); 
-							if(LRU.get(o).equals(maxValue)) { 
-								LRU.remove(o);
-								validBit.remove(o);
-								System.out.println("lalallalalal111111111111111\n");
-								writeHits++;
-								break;
-							} 
-						}
-					}
-					
-				}else{
-					writeMisses++;
-				}
-			}else{
-				LRU.put(address,50);
-				validBit.put(address,1);
-				writeMisses++;
-			}
-		}else{
-			if(LRU.containsKey(address)==true){
-				if(((int)validBit.get(address)&address)==1){
-					readHits++;
-					validBit.put(address,0);
-					lru=(int)LRU.get(address);
-					LRU.put(address,lru-2);
-				}else if(((int)validBit.get(address)&address)==0&&LRU.size()==capacity/2){
-					c=LRU.values();
-					maxValue=(Object)Collections.max(c);
-					while (it.hasNext()) {
-						Object o = it.next(); 
-						if(LRU.get(o).equals(maxValue)) { 
-							LRU.remove(o);
-							validBit.remove(o);
-							validBit.put(address,1);
-							LRU.put(address,50);
-							System.out.println("lalallalalal\n");
-							break;
-						}
-					}
-				}else{
-					readMisses++;
-				}
-			}else{
-				numRefills++;
-				readMisses++;
-			}
-		}
-		/*System.out.println("array list   " + mylist +"\n");
-		if(op.equals("R") && mylist.contains("7f588cd8a218")==true){
-			readHits+=1;
-		}*/
 	}
 
     public void report() {
@@ -193,36 +105,28 @@ class Cache {
 		//  --- 
 		// Don't forget to call InitCache() below!!!!
 		// -----------------------------------------------------------
-		blockBit = (int) (Math.log(blockSize) / Math.log(2.0));
-		numSets = capacity / blockSize / associativity;
-		indexBit = blockBit + (int) (Math.log(numSets) / Math.log(2.0));
-		validBit=new HashMap((int)capacity/8);
-		//mylist=new ArrayList((int)capacity);
-		LRU=new HashMap((int)capacity/8);
 		initCache();
-		//System.out.println("arraylist is    " + mylist.get(0) + "    " + mylist.get(1));
 	}
 
     public long getTag(long addr) {
 	    // -----------------------------------------------------------
 		// Replace with your code from lab07
 	    // -----------------------------------------------------------
-		
-		return (addr >>> indexBit);
+		return 0xabcd;
 	}
 
     public long getIndex(long addr) {
 	    // -----------------------------------------------------------
 		// Replace with your code from lab07
 	    // -----------------------------------------------------------
-		return (addr >>> blockBit)&(numSets-1);
+		return 0x10;
 	}
 
     public long getBoff(long addr) {
 	    // -----------------------------------------------------------
 		// Replace with your code from lab07
 	    // -----------------------------------------------------------
-		return (addr & (blockSize-1));
+		return 0x4;
 	}
 
 }

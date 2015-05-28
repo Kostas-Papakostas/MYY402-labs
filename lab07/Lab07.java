@@ -15,9 +15,9 @@ class Cache {
 	private int numofset;
 	private int power=0;//power of 2 for blocksize;
 	private int addrsize=48;//zize of address
-	private long blockBit;
-	private long numSets;
-	private long indexBit;
+	private int blockoff;
+	private double setindex;
+	private int mask;
 	// -----------------------------------------------------------
 	// ADD ANY OTHER VARIABLES NEEDED FOR CACHE CONFIGURATION HERE
 	// E.G.:
@@ -51,9 +51,9 @@ class Cache {
             System.exit(1);
         }
 		//################NEW CODE#######################
-		blockBit = (int) (Math.log(blockSize) / Math.log(2.0));
-		numSets = capacity / blockSize / associativity;
-		indexBit = blockBit + (int) (Math.log(numSets) / Math.log(2.0));
+		numofset=8/associativity; //computes the number of sets
+		blockoff=addrsize % (4*(int)Math.pow(2,(Math.log(blockSize)/Math.log(2))));
+		setindex=Math.log(numofset)/Math.log(2);
 	    // -----------------------------------------------------------
 		// Complete code here for other cache parameters derived from the above.
 	    // -----------------------------------------------------------
@@ -65,7 +65,11 @@ class Cache {
 		// Replace return const below with the computed tag
 	    // -----------------------------------------------------------
 		
-		return (addr >>> indexBit);
+		long res;
+		mask=addrsize-((int)setindex*4)-((int)(Math.log(blockSize)/Math.log(2))*4);
+		res=addr >> (mask);
+		
+		return res;
 	}
 
     public long getIndex(long addr) {
@@ -73,16 +77,21 @@ class Cache {
 		// Write code here
 		// Replace return const below with the computed index
 	    // -----------------------------------------------------------
-
-		return (addr >>> blockBit)&(numSets-1);
+		long res;
+		res=addr >>> ((int)setindex*4);
+		res=res << ((int)setindex*4+addrsize-blockSize);
+		res=res >>> ((int)setindex*4+addrsize-blockSize);
+		return res;
 	}
     public long getBoff(long addr) {
 	    // -----------------------------------------------------------
 		// Write code here
 		// Replace return const below with the computed block offset
 	    // -----------------------------------------------------------
-		
-		return (addr & (blockSize-1));
+		long res;
+		res=addr << (addrsize+8);
+		res=res >>> (addrsize+(blockoff)-(blockSize));
+		return res;
 	}
 
 }
