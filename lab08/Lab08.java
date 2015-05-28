@@ -1,4 +1,4 @@
-
+//Konstantinos Papakostas 2399
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -35,8 +35,10 @@ class Cache {
 	private long blockBit;
 	private long numSets;
 	private long indexBit;
+	
 	HashMap LRU=null;		//it keeps the addresses and the if someone has been used recently
-	HashMap validBit=null;		//it keeps the validBits
+	HashMap validBit=null;		//it keeps the validBits of the lines
+	
 	// Initialize any data structures for the cache
 	//  and counters of events.
 	private void initCache() {
@@ -61,6 +63,7 @@ class Cache {
 		// Write your code here
 	    // -----------------------------------------------------------
 		long address=getTag(addr);
+		long addrindex=getIndex(addr);
 		int lru;
 		Collection c;
 		Object maxValue;
@@ -74,60 +77,57 @@ class Cache {
 		
 		if(op.equals("W")){
 			if(LRU.containsKey(address)==true){
-				
-				if((((int)validBit.get(address)&address))==0){
+				if((((int)validBit.get(address))&address)==1){
 					writeHits++;
-					validBit.put(address,1);
-					lru=(int)LRU.get(address);
-					LRU.put(address,lru-2);
-				}else if((((int)validBit.get(address)&address))==1){
-					writeMisses++;
-					if(LRU.size()==capacity/2){
-						numRefills++;
-						c=LRU.values();
+					if(LRU.size()==numSets){								//if there is a valid address in cache(valid bit 1)
+																		// and the cache is full free the LRU line
+						c=LRU.values();									//and add this address
 						maxValue=(Object)Collections.max(c);
+						
 						while (it.hasNext()) {
 							Object o = it.next(); 
 							if(LRU.get(o).equals(maxValue)) { 
 								LRU.remove(o);
 								validBit.remove(o);
-								System.out.println("lalallalalal111111111111111\n");
-								writeHits++;
 								break;
 							} 
+						}		
+						validBit.put(address,1);
+						LRU.put(address,50);
+					}
+					else{
+						if(getWriteAllocPolicy().equals("A")){
+							writeMisses++;
+							numRefills++;
+							validBit.put(address,1);
+							lru=(int)LRU.get(address);
+							LRU.put(address,lru-2);	
+						}else{
+							writeMisses++;
+							validBit.put(address,1);
+							lru=(int)LRU.get(address);
+							LRU.put(address,lru-2);				//it shows which line is the least recently used
 						}
 					}
-					
 				}else{
-					writeMisses++;
+					numRefills++;
+					writeHits++;
 				}
-			}else{
-				LRU.put(address,50);
-				validBit.put(address,1);
-				writeMisses++;
 			}
-		}else{
+			else{	
+				numRefills++;
+				writeMisses++;									//if the address doesn't exist in cache
+				LRU.put(address,50);					//then add it and increase te miss rate
+				validBit.put(address,1);
+			}
+		}else{													// we read now
 			if(LRU.containsKey(address)==true){
 				if(((int)validBit.get(address)&address)==1){
 					readHits++;
-					validBit.put(address,0);
 					lru=(int)LRU.get(address);
 					LRU.put(address,lru-2);
-				}else if(((int)validBit.get(address)&address)==0&&LRU.size()==capacity/2){
-					c=LRU.values();
-					maxValue=(Object)Collections.max(c);
-					while (it.hasNext()) {
-						Object o = it.next(); 
-						if(LRU.get(o).equals(maxValue)) { 
-							LRU.remove(o);
-							validBit.remove(o);
-							validBit.put(address,1);
-							LRU.put(address,50);
-							System.out.println("lalallalalal\n");
-							break;
-						}
-					}
 				}else{
+					numRefills++;
 					readMisses++;
 				}
 			}else{
@@ -135,10 +135,6 @@ class Cache {
 				readMisses++;
 			}
 		}
-		/*System.out.println("array list   " + mylist +"\n");
-		if(op.equals("R") && mylist.contains("7f588cd8a218")==true){
-			readHits+=1;
-		}*/
 	}
 
     public void report() {
@@ -151,6 +147,9 @@ class Cache {
 		System.out.printf("Miss rate: %f\n", (double) (readMisses + writeMisses)/numAccesses);
 	}
 
+	public String getWriteAllocPolicy(){
+		return writeAllocPolicy;
+	}
 	// Constructor
 	public Cache(String[] args) {
 
@@ -180,6 +179,7 @@ class Cache {
 		// THIS WAS NOT IN LAB07. DON'T REMOVE IT !!!!!!!!
 		// --------------------------------------------
         writeAllocPolicy = args[3];
+		
         
 	    // -----------------------------------------------------------
 		// Replace with your code from lab07
@@ -189,11 +189,10 @@ class Cache {
 		blockBit = (int) (Math.log(blockSize) / Math.log(2.0));
 		numSets = capacity / blockSize / associativity;
 		indexBit = blockBit + (int) (Math.log(numSets) / Math.log(2.0));
-		validBit=new HashMap((int)capacity/8);
-		//mylist=new ArrayList((int)capacity);
-		LRU=new HashMap((int)capacity/8);
+		
+		validBit=new HashMap((int)numSets);
+		LRU=new HashMap((int)numSets);
 		initCache();
-		//System.out.println("arraylist is    " + mylist.get(0) + "    " + mylist.get(1));
 	}
 
     public long getTag(long addr) {
